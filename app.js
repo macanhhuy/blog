@@ -30,15 +30,15 @@ app.configure(function(){
   app.use(express.session({ secret: 'wasdsafeAD' }));
   app.use(gzippo.staticGzip(__dirname + '/public'));
   app.use(app.router);
-  
+
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
-  //app.use(express.errorHandler()); 
+  //app.use(express.errorHandler());
 });
 
 app.helpers({
@@ -59,7 +59,10 @@ function isUser(req, res, next) {
   if (req.session.user) {
     next();
   } else {
-    next(new Error('You must be user to access this page'));
+    req.flash('error', 'You must be user to access this page');
+     res.redirect('/login');
+   // next(new Error('You must be user to access this page'));
+
   }
 }
 
@@ -76,7 +79,7 @@ app.get('/', function(req, res) {
   var fields = { subject: 1, body: 1, tags: 1, created: 1, author: 1 };
   db.post.find({ state: 'published'}, fields).sort({ created: -1}, function(err, posts) {
     if (!err && posts) {
-      res.render('index.jade', { title: 'My Blog', postList: posts }); 
+      res.render('index.jade', { title: 'My Blog', postList: posts });
     }
   });
 });
@@ -94,7 +97,7 @@ app.post('/post/add', isUser, function(req, res) {
     , created: new Date()
     , modified: new Date()
     , comments: []
-    , author: { 
+    , author: {
         username: req.session.user.user
     }
   };
@@ -122,8 +125,8 @@ app.get('/post/edit/:postid', isUser, function(req, res) {
 });
 
 app.post('/post/edit/:postid', isUser, function(req, res) {
-  db.post.update({ _id: db.ObjectId(req.body.id) }, { 
-    $set: { 
+  db.post.update({ _id: db.ObjectId(req.body.id) }, {
+    $set: {
         subject: req.body.subject
       , body: req.body.body
       , tags: req.body.tags.split(',')
@@ -140,15 +143,15 @@ app.get('/post/delete/:postid', isUser, function(req, res) {
   db.post.remove({ _id: db.ObjectId(req.params.postid) }, function(err, field) {
     if (!err) {
       req.flash('error', 'Post has been deleted');
-    } 
+    }
     res.redirect('/');
   });
 });
 
 app.get('/post/:postid', function(req, res) {
-  res.render('show.jade', { 
+  res.render('show.jade', {
     title: 'Showing post - ' + req.post.subject,
-    post: req.post 
+    post: req.post
   });
 });
 
@@ -164,7 +167,7 @@ app.post('/post/comment', function(req, res) {
       if (!err) {
         req.flash('success', 'Comment added to post');
       }
-      res.redirect('/'); 
+      res.redirect('/');
   });
 });
 
@@ -195,9 +198,46 @@ app.post('/login', function(req, res) {
       // User not found lets go through login again
       res.redirect('/login');
     }
-    
+
   });
 });
+
+app.get('/user/add', isUser, function(req, res) {
+  res.render('adduser.jade', {
+    title: 'Add user'
+  });
+});
+
+app.post('/user/add', isUser, function(req, res) {
+
+  var values = {
+      user: req.body.username
+    , pass: crypto.createHash('sha256').update(req.body.password + conf.salt).digest('hex')
+  };
+
+db.user.findOne({user:req.body.username}, function(err, user){
+
+
+   if (!user){
+     db.user.insert(values, function(err, user) {
+    console.log(err, user);
+
+       res.redirect('/');
+      });
+   }
+   else {
+    req.flash('error', "Username exist!");
+    res.redirect('/');
+   }
+
+});
+
+
+
+});
+
+
+
 
 //The 404
 app.get('/*', function(req, res){
@@ -220,7 +260,7 @@ if (cluster.isMaster) {
   }
 } else {
   // Worker processes
-  app.listen(3000);  
+  app.listen(3000);
 }
 
 

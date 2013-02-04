@@ -1,0 +1,19 @@
+partial('alert', flash)
+form(class="form-horizontal",name="add-user",method="post",action="/user/add")
+  fieldset
+    legend Add new user
+
+    div.control-group
+      label.control-label Username:
+      div.controls
+        input(type="text",name="username",class="input-xlarge")
+
+    div.control-group
+      label.control-label Password:
+      div.controls
+        input(type="password",name="password",class="input-xlarge")
+ 
+    
+
+    div.form-actions
+      input(type="submit",value="Add",name="add",class="btn btn-primary")
