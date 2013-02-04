@@ -15,6 +15,10 @@ var express = require('express')
 var conf = {
   salt: 'rdasSDAg'
 };
+// utils
+var utils = require('./modules/utils/utils');
+// localization
+var localization = require('./modules/localization/localization');
 
 var app = module.exports = express.createServer();
 
@@ -34,7 +38,7 @@ app.configure(function(){
 });
 
 app.configure('development', function(){
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  //app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
 
 app.configure('production', function(){
@@ -65,7 +69,22 @@ function isUser(req, res, next) {
 
   }
 }
-
+function locDau(str){
+	 str= str.toLowerCase();
+  str= str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");
+  str= str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e");
+  str= str.replace(/ì|í|ị|ỉ|ĩ/g,"i");
+  str= str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o");
+  str= str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u");
+  str= str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y");
+  str= str.replace(/đ/g,"d");
+  str= str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'| |\"|\&|\#|\[|\]|~|$|_/g,"-");
+/* tìm và thay thế các kí tự đặc biệt trong chuỗi sang kí tự - */
+  str= str.replace(/-+-/g,"-"); //thay thế 2- thành 1-
+  str= str.replace(/^\-+|\-+$/g,"");
+//cắt bỏ ký tự - ở đầu và cuối chuỗi
+  return str;
+}
 app.error(function(err, req, res, next){
   if (err instanceof NotFound) {
     res.render('error/404.jade', { title: 'Not found 404' });
@@ -76,7 +95,8 @@ app.error(function(err, req, res, next){
 
 // Listing
 app.get('/', function(req, res) {
-  var fields = { subject: 1, body: 1, tags: 1, created: 1, author: 1 };
+  var fields = { subject: 1, body: 1, tags: 1, slug: 1, created: 1, author: 1 };
+
   db.post.find({ state: 'published'}, fields).sort({ created: -1}, function(err, posts) {
     if (!err && posts) {
       res.render('index.jade', { title: 'My Blog', postList: posts });
@@ -92,6 +112,8 @@ app.post('/post/add', isUser, function(req, res) {
   var values = {
       subject: req.body.subject
     , body: req.body.body
+    , slug: utils.removeUTF8(req.body.subject)
+
     , tags: req.body.tags.split(',')
     , state: 'published'
     , created: new Date()
@@ -118,6 +140,18 @@ app.param('postid', function(req, res, next, id) {
     req.post = post;
     next();
   });
+});
+
+app.param('slug', function(req, res, next, slug) {
+ if(slug.indexOf('.html')>0){
+ 	  db.post.findOne({ slug: slug.replace('.html','')}, function(err, post) {
+    if (err) return next(new Error('Make sure you provided correct post id'));
+    if (!post) return next(new Error('Post loading failed'));
+    req.post = post;
+    next();
+  });
+ }
+
 });
 
 app.get('/post/edit/:postid', isUser, function(req, res) {
@@ -148,7 +182,7 @@ app.get('/post/delete/:postid', isUser, function(req, res) {
   });
 });
 
-app.get('/post/:postid', function(req, res) {
+app.get('/post/:slug', function(req, res) {
   res.render('show.jade', {
     title: 'Showing post - ' + req.post.subject,
     post: req.post
