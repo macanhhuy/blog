@@ -156,6 +156,10 @@ app.param('slug', function(req, res, next, slug) {
 
 });
 
+app.get('/ckfinder/ckfinder.html', function(req, res){
+	res.send("CKFINDER");
+});
+
 app.get('/post/edit/:postid', isUser, function(req, res) {
   res.render('edit.jade', { title: 'Edit post', blogPost: req.post } );
 });
