@@ -1,6 +1,6 @@
 mixin blogPost(post)
   div.span6
-    a(href="/post/#{post._id}")
+    a(href="/post/#{post.slug}.html")
       h3 #{post.subject}
     p #{post.body.substr(0, 250) + '...'}
     p#info 
@@ -11,7 +11,7 @@ mixin blogPost(post)
       div.post-time
         em #{moment(post.created).format('LLL')}
     p
-      a(class="btn btn-small",href="/post/#{post._id}") Read more &raquo;  
+      a(class="btn btn-small",href="/post/#{post.slug}.html") Read more &raquo;  
 
 
 div.hero-unit 

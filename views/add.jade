@@ -1,3 +1,4 @@
+
 form(class="form-horizontal",name="add-post",method="post",action="/post/add")
   fieldset
     legend Add new blog post
@@ -10,7 +11,7 @@ form(class="form-horizontal",name="add-post",method="post",action="/post/add")
     div.control-group
       label.control-label Content:
       div.controls
-        textarea(name="body", rows="10", cols="30")
+        textarea(id="cke_editor1", class="ckeditor cke_1 cke cke_reset cke_chrome cke_editor_editor1 cke_ltr cke_browser_webkit", name="body", rows="10", cols="30")
  
     div.control-group
       label.control-label Tags:
