@@ -10,7 +10,7 @@ var express = require('express')
   , moment = require('moment')
   , cluster = require('cluster')
   , os = require('os')
-  
+
   , mongoose = require('mongoose');
 
 
@@ -22,7 +22,8 @@ var conf = {
 var models = require('./models/models');
 
 // utils
-var utils = require('./modules/utils/utils');
+var utils = require('./modules/utils/utils')
+	,file = require('./modules/utils/util.file');
 // localization
 var localization = require('./modules/localization/localization');
 
@@ -129,7 +130,7 @@ var post = new Post(values);
     console.log(err, post);
     res.redirect('/');
   });
-  
+
 });
 // Show post
 // Route param pre condition
@@ -165,7 +166,7 @@ app.get('/post/edit/:postid', isUser, function(req, res) {
 });
 
 app.post('/post/edit/:postid', isUser, function(req, res) {
-  db.post.update({ _id: db.ObjectId(req.body.id) }, {
+  Post.update({ _id: req.body.id }, {
     $set: {
         subject: req.body.subject
       , body: req.body.body
@@ -180,7 +181,7 @@ app.post('/post/edit/:postid', isUser, function(req, res) {
 });
 
 app.get('/post/delete/:postid', isUser, function(req, res) {
-  db.post.remove({ _id: db.ObjectId(req.params.postid) }, function(err, field) {
+  Post.remove({ _id: db.ObjectId(req.params.postid) }, function(err, field) {
     if (!err) {
       req.flash('error', 'Post has been deleted');
     }
@@ -202,7 +203,7 @@ app.post('/post/comment', function(req, res) {
     , body: req.body.comment
     , created: new Date()
   };
-  db.post.update({ _id: db.ObjectId(req.body.id) }, {
+  Post.update({ _id: req.body.id }, {
     $push: { comments: data }}, { safe: true }, function(err, field) {
       if (!err) {
         req.flash('success', 'Comment added to post');
@@ -255,7 +256,7 @@ app.post('/user/add', isUser, function(req, res) {
     , pass: crypto.createHash('sha256').update(req.body.password + conf.salt).digest('hex')
   };
 
-db.user.findOne({user:req.body.username}, function(err, user){
+User.findOne({user:req.body.username}, function(err, user){
 
 
    if (!user){
@@ -276,8 +277,14 @@ db.user.findOne({user:req.body.username}, function(err, user){
 
 });
 
+var formidable = require('formidable'),
 
+		fs = require('fs');
+//Upload
+app.post('/ckfinder/upload',function(req, res){
 
+file.upload(req, res);
+});
 
 //The 404
 app.get('/*', function(req, res){

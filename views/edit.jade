@@ -10,7 +10,7 @@ form(class="form-horizontal",name="edit-post",method="post",action="/post/edit/#
     div.control-group
       label.control-label Content:
       div.controls
-        textarea(name="body",rows="10",cols="30",class="span6") #{blogPost.body}
+        textarea(class="ckeditor span6", name="body",rows="10",cols="30") #{blogPost.body}
  
     div.control-group
       label.control-label Tags:
