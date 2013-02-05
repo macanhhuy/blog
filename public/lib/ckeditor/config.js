@@ -8,6 +8,18 @@ CKEDITOR.editorConfig = function( config ) {
 	// For the complete reference:
 	// http://docs.ckeditor.com/#!/api/CKEDITOR.config
 
+  
+    //config.uiColor = '#2c2c2c';
+
+	config.filebrowserBrowseUrl = '/ckfinder/ckfinder.html';
+	config.filebrowserImageBrowseUrl = '/ckfinder/ckfinder.html?type=Images';
+	config.filebrowserFlashBrowseUrl = '/ckfinder/ckfinder.html?type=Flash';
+	config.filebrowserUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
+	config.filebrowserImageUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images';
+	config.filebrowserFlashUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
+		
+		
+	
 	// The toolbar groups arrangement, optimized for two toolbar rows.
 	config.toolbarGroups = [
 		{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
