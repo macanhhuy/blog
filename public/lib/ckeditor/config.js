@@ -11,12 +11,12 @@ CKEDITOR.editorConfig = function( config ) {
   
     //config.uiColor = '#2c2c2c';
 
-	config.filebrowserBrowseUrl = '/ckfinder/ckfinder.html';
-	config.filebrowserImageBrowseUrl = '/ckfinder/ckfinder.html?type=Images';
-	config.filebrowserFlashBrowseUrl = '/ckfinder/ckfinder.html?type=Flash';
-	config.filebrowserUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files';
-	config.filebrowserImageUploadUrl = '/ckfinder/upload';
-	config.filebrowserFlashUploadUrl = '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Flash';
+	config.filebrowserBrowseUrl = '/filemanager';
+	config.filebrowserImageBrowseUrl = '/filemanager';
+	config.filebrowserFlashBrowseUrl = '/filemanager';
+	config.filebrowserUploadUrl = '/upload';
+	config.filebrowserImageUploadUrl = '/upload';
+	config.filebrowserFlashUploadUrl = '/upload';
 		
 		
 	

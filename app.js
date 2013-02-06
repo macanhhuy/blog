@@ -9,6 +9,7 @@ var express = require('express')
   , crypto = require('crypto')
   , moment = require('moment')
   , cluster = require('cluster')
+  , fs = require('fs')
   , os = require('os')
 
   , mongoose = require('mongoose');
@@ -94,9 +95,26 @@ app.error(function(err, req, res, next){
   }
 });
 
+
+
+
+
+
 // Listing
 app.get('/', function(req, res) {
   var fields = { subject: 1, body: 1, tags: 1, slug: 1, created: 1, author: 1 };
+// fs.readdir(__dirname + '/public/files/2013', function(err, data){
+//   if(err){
+//       fs.mkdir(__dirname + '/public/files/2013');
+//   }
+//   else{
+//           console.log( data);
+//   }
+
+//     });
+
+
+
 
   Post.find({ state: 'published'}, fields, function(err, posts) {
     if (!err && posts) {
@@ -157,9 +175,6 @@ app.param('slug', function(req, res, next, slug) {
 
 });
 
-app.get('/ckfinder/ckfinder.html', function(req, res){
-	res.send("CKFINDER");
-});
 
 app.get('/post/edit/:postid', isUser, function(req, res) {
   res.render('edit.jade', { title: 'Edit post', blogPost: req.post } );
@@ -277,14 +292,32 @@ User.findOne({user:req.body.username}, function(err, user){
 
 });
 
-var formidable = require('formidable'),
 
-		fs = require('fs');
 //Upload
-app.post('/ckfinder/upload',function(req, res){
+app.post('/upload',function(req, res){
 
 file.upload(req, res);
 });
+
+
+app.get('/filemanager', function(req, res) {
+
+    fs.readdir(__dirname + '/public/files', function(err, data){
+res.render('upload.jade', { title: 'File Manager', allfiles: data});
+
+    });
+
+
+});
+
+
+// JSON FILE
+app.get('/api/file/json', function(req, res){
+   file.getFiles(req, res);
+
+
+});
+
 
 //The 404
 app.get('/*', function(req, res){

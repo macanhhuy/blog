@@ -1,3 +1,36 @@
 body {
 	padding-top: 60px;
 }
+span.folder-close{
+	width: 32px;
+	height: 32px;
+	background: url(../images/folder-close.png) no-repeat;
+	float: left;
+}
+
+span.image-file{
+	width: 32px;
+	height: 32px;
+	background: url(../images/picture_file.png) no-repeat;
+	float: left;
+}
+
+span.folder-name, span.filename{
+	margin-left: 40px;
+	height: 32px;
+	display: block;
+	line-height: 32px;
+	font-weight: bold;
+}
+div.folder, div.delete-icon{
+		cursor: pointer;
+}
+
+div.delete-icon{
+	width: 32px;
+	height: 32px;
+	background: url(../images/deletered.png) no-repeat;
+	float: left;
+	text-indent: 9999px;
+	
+}
