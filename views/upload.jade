@@ -1,0 +1,23 @@
+table(class="table table-bordered table-striped")
+  tr
+    th File Name
+    th Action
+  - if(allfiles.length)
+
+    - for item in allfiles
+      tr
+        td
+          - if(item.indexOf('.')>0)
+            span(class="image-file")
+            span(class="filename")  
+              a(href="files/#{item}")= item
+          - else
+            div(class="folder", dir="#{item}")
+              span(class="folder-close")
+              span(class="folder-name")= item
+        td 
+          div(class="delete-icon") Delete
+
+
+
+
