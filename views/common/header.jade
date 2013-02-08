@@ -2,12 +2,20 @@
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/css/style.css')
+    link(href="/css/bootstrap.css", rel="stylesheet")
+    link(href="/css/style.css", rel="stylesheet")
+    link(href="/css/lightbox.css", rel="stylesheet")
+    script(src="/js/jquery-1.7.2.min.js")
     script(src='/lib/ckeditor/ckeditor.js')
     script(src='/js/main.js')
+    script(src="/js/bootstrap.js")
     
-    
+    script(src="/js/lightbox.js")
+    link(rel="stylesheet",href="/css/font-awesome.min.css")
+    <!--[if IE 7]>
+    link(rel="stylesheet",href="/css/font-awesome-ie7.min.css")
+    <![endif]-->
   body
     div.navbar.navbar-fixed-top
       div.navbar-inner
@@ -16,21 +24,25 @@ html
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a(class="brand",href="/") Blog with NodeJS
+          a(class="brand",href="/") HM
           div.nav-collapse
             ul.nav
               li.active
-                a(href="/") Home
+                a(href="/") 
+                  i(class="icon-home")
               - if (user)
                 li
                   a(href="/post/add") Add post
                 li
                   a(href="user/add")  Add  user
               li
-                a(href="#") Contact
+                a(href="#",rel="tooltip",data-placement="right",title="Contact Us",class="contact") 
+                  i(class="icon-envelope")
             p.navbar-text.pull-right
               - if (user)
-                  span Logged in as 
-                  a(href="/logout") #{user.user}
+                  span Logged in as
+                  a(href="/logout")&nbsp;&nbsp;#{user.user}
               - else
-                a(href="/login") Login user
+                a(href="/login", class="btn") 
+                  i(class="icon-user icon-white")&nbsp;&nbsp;Login
+                

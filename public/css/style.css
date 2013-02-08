@@ -22,15 +22,16 @@ span.folder-name, span.filename{
 	line-height: 32px;
 	font-weight: bold;
 }
-div.folder, div.delete-icon{
+div.folder, td.delete i{
 		cursor: pointer;
 }
 
-div.delete-icon{
-	width: 32px;
-	height: 32px;
-	background: url(../images/deletered.png) no-repeat;
-	float: left;
-	text-indent: 9999px;
-	
+.fl{
+	float:left;
+}
+.fr{
+	float:right;
+}
+.fn{
+	float: none;
 }

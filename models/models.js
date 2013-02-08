@@ -18,6 +18,16 @@ var Author = new Schema({
 var Tags = new Schema({
       tag: String
       });
+var filemanagerSchema = new Schema({
+    name: String,
+    parent: { type: mongoose.Schema.Types.ObjectId, default: null},
+    type: String,
+    folder:{ type: Boolean },
+    size: Number,
+    created: Date
+}, { versionKey: false });
+
+
 
 var Post = new Schema({
     subject: String
@@ -30,7 +40,11 @@ var Post = new Schema({
   , author: {username: String}
   , comments: [Comments]
 }, { versionKey: false });
-		
+
+exports.fileManager = function(){
+    return mongoose.model('filemanager', filemanagerSchema);
+}
+
 exports.userModel = function(){
 		return mongoose.model('User', User);
 }

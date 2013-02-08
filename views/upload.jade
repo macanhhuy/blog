@@ -1,22 +1,67 @@
-table(class="table table-bordered table-striped")
-  tr
-    th File Name
-    th Action
-  - if(allfiles.length)
-
-    - for item in allfiles
-      tr
-        td
-          - if(item.indexOf('.')>0)
-            span(class="image-file")
-            span(class="filename")  
-              a(href="files/#{item}")= item
-          - else
-            div(class="folder", dir="#{item}")
-              span(class="folder-close")
-              span(class="folder-name")= item
-        td 
-          div(class="delete-icon") Delete
+form(action="/upload",method="post",enctype="multipart/form-data")
+  div(class="fileupload fileupload-new",data-provides="fileupload")
+    div(class="input-append")
+      div(class="uneditable-input span3")
+        i(class="icon-file fileupload-exists")
+        span(class="fileupload-preview")
+      span(class="btn btn-file")
+        span(class="fileupload-new") Select file
+        span(class="fileupload-exists") Change
+        input(type="file", name="upload")
+        input(type="hidden", name="func",value="fm")
+      a(href="#",class="btn fileupload-exists",data-dismiss="fileupload") Remove
+      input(type="submit",class="btn fileupload-exists",value="Upload",name="uploadfile")
+!=partial('alert', flash)
+div=id
+form(action="/filedelete", name="filemanager",method="post")
+  table(class="table table-bordered table-striped table-hover")
+    tr
+      td
+      td(colspan="2") 
+        
+        div(class="input-append")
+          input(name="foldername",type="text",placeholder="Folder Name")
+          a(class="btn newfolder") New Folder
+      
+    tr
+      th
+        input(type="checkbox",name="all",class="checkall")
+      th File Name
+      th Action
+    - if(allfiles.length)
+    - var i=1
+      - for item in allfiles
+        
+        tr(class="file#{i}")
+          td
+            input(type="checkbox",name="files[]",value="#{item.name}")
+          td
+            - if(item.name.indexOf('.')>0)
+              i(class="icon-picture icon-2x fl")
+              span(class="filename")
+                a(href="files/#{item.name}",rel="lightbox")= item.name
+            - else
+              div(class="folder", dir="#{item.name}")
+                a(href="?id=#{item._id}")
+                  i(class="icon-folder-close icon-2x fl")
+                  span(class="folder-name")= item.name
+          td(class="delete")
+            i(class="icon-trash icon-2x")
+        - i++
+    tr
+      td(style="vertical-align: middle;")
+        a(class="btn deleteall") Delete
+      td(colspan="2")
+        div(class="pagination pull-right")
+         ul
+          li
+            a(href="#") Prev
+          li
+            a(href="#") 1
+          li
+            a(href="#") 2
+          li
+            a(href="#") Next
 
 
 

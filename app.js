@@ -39,6 +39,8 @@ var Post = models.postModel();
 
 var User = models.userModel();
 
+var File = models.fileManager();
+
 // Configuration
 
 app.configure(function(){
@@ -299,21 +301,94 @@ app.post('/upload',function(req, res){
 file.upload(req, res);
 });
 
+//Upload
+app.post('/files/delete',function(req, res){
+  
+for(var i=0;i<req.body.length;i++){
+ 
+  file.delete(req, req.body[i]);
 
-app.get('/filemanager', function(req, res) {
+}
+res.end();
+});
+//Upload
+app.post('/files/newfolder',function(req, res){
 
-    fs.readdir(__dirname + '/public/files', function(err, data){
-res.render('upload.jade', { title: 'File Manager', allfiles: data});
+    file.newfolder(req);
+    res.redirect(req.headers.referer);
+});
 
-    });
+var crumbs = function(req, res, next){
+    var crumbs = [];
+
+    var parent = function(id){
+        File
+            .findOne()
+            .where('_id', id)
+            .exec(function(err, folder){
+                if(folder) {
+                    crumbs.push(folder.toObject());
+                    parent(folder.parent);
+                }else{
+                    req.crumbs = crumbs.reverse();
+                    next()
+                }
+
+            })
+    };
+
+    if(req.query.id){
+        parent(req.query.id);
+    }
+    else next();
+};
+
+app.get('/filemanager',[crumbs], function(req, res) {
+
+
+File.find().where('parent', req.query.id || null).sort({parent: 1, folder: -1}).exec(function(err, docs){
+        if(docs){
+res.render('upload.jade', {title: 'File Manager', allfiles: docs, id: req.query.id});
+   
+        }
+        else{
+          res.render('upload.jade', {title: 'No File', allfiles: [], id: req.query.id});
+   
+        }
+
+      });
+
+
 
 
 });
 
+app.get('/filemanager/:folder', function(req, res) {
+
+
+
+
+     fs.readdir(__dirname + '/public/files/'+req.params.folder, function(err, data){
+      if(data){
+res.render('upload.jade', { title: 'File Manager', allfiles: data});
+
+      } else{
+       
+     res.render('upload.jade', { title: 'No File', allfiles: []});
+   
+
+      }
+
+    });
+
+});
 
 // JSON FILE
-app.get('/api/file/json', function(req, res){
-   file.getFiles(req, res);
+app.get('/files', function(req, res){
+
+  File.find().exec(function(err, docs){
+        res.json(err || docs);
+    })
 
 
 });
